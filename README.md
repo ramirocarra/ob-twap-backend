@@ -37,6 +37,17 @@ The system was designed to be as simple as possible and to leverage the security
 
 ### Order Scheduling
 
+There are several approaches to define **when** orders are able to be executed. The current design ensures that order are enabled for execution at **fixed intervals from the order creation**.
+This means, no matter the actual timestamp of the real execution, the intervals will always be referenced from the order creation.
+
+![Order Execution Timeline](./order-execution-timeline.png)
+
+This is achieved by always setting the `last execution timestamp = previous execution timestamp + interval`.
+
+Another possible approach is to set the `last execution timestamp = current timestamp`. But this will cause the intervals to be different depending on the execution time and potentially shifting the intervals.
+
+> A Caveat of the current approach is that if the order is not executed within an interval, you can execute all missed intervals at once. This can be mitigated by modifying the logic to consider these not executed intervals as "lost" and not allow for succesive executions, this will cause the order to go on for a longer time until completing the total amount.
+
 ## Server Implementation
 
 The server provides an endpoint that users can call to get the needed `calldata` to build a transaction for creating the order.
