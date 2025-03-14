@@ -94,7 +94,7 @@ export const twapRouterAbi = [
   },
   {
     type: 'function',
-    name: 'getPendingOrderIds',
+    name: 'getActiveOrderIds',
     inputs: [],
     outputs: [
       {

@@ -1,9 +1,8 @@
-import { OBApiModule } from 'src/providers/ob-api/ob-api.module';
 import { TwapExecutorService } from './twap-executor.service';
 import { Module } from '@nestjs/common';
 
 @Module({
-  imports: [OBApiModule],
+  imports: [],
   controllers: [],
   providers: [TwapExecutorService],
 })

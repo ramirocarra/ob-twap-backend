@@ -1,3 +1,4 @@
+import { OBApiService } from 'src/providers/ob-api/ab-api.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { twapRouterAbi } from '../../ob-twap-router-abi';
 import { CreateOrderDto } from './dtos/create-order.dto';
@@ -6,7 +7,11 @@ import BigNumber from 'bignumber.js';
 
 @Injectable()
 export class OrdersService {
-  getCreateOrderPayload(createOrderRequest: CreateOrderDto): string {
+  constructor(private readonly obApiService: OBApiService) {}
+
+  async getCreateOrderPayload(
+    createOrderRequest: CreateOrderDto,
+  ): Promise<string> {
     const slippage = BigNumber(createOrderRequest.slippage)
       .multipliedBy(10000)
       .toFixed(0);
@@ -23,7 +28,19 @@ export class OrdersService {
       throw new BadRequestException('Invalid recipient address');
     }
 
-    // TODO: call contract to validate inputs
+    if (
+      !(await this.obApiService.isTokenSupported(createOrderRequest.tokenIn))
+    ) {
+      throw new BadRequestException('TokenIn is not supported');
+    }
+
+    if (
+      !(await this.obApiService.isTokenSupported(createOrderRequest.tokenOut))
+    ) {
+      throw new BadRequestException('TokenOut is not supported');
+    }
+
+    // TODO: call contract to validate inputs (consitency, balance, allowance, etc)
 
     return encodeFunctionData({
       abi: twapRouterAbi,

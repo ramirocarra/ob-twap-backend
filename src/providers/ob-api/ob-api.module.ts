@@ -1,6 +1,7 @@
 import { OBApiService } from './ab-api.service';
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 
+@Global()
 @Module({
   imports: [],
   controllers: [],
